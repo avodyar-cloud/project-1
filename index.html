@@ -2,9 +2,22 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#6366f1">
     <title>ملاحظاتي الدراسية</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* إضافة padding للأجهزة التي تحتوي على notch */
+        body {
+            padding-top: max(0px, env(safe-area-inset-top));
+            padding-right: max(0px, env(safe-area-inset-right));
+            padding-bottom: max(0px, env(safe-area-inset-bottom));
+            padding-left: max(0px, env(safe-area-inset-left));
+        }
+    </style>
 </head>
 <body>
     <div class="container">
