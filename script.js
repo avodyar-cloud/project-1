@@ -38,6 +38,45 @@ function initDarkMode() {
     document.getElementById('themeToggleBtn')?.addEventListener('click', toggleDarkMode);
 }
 
+// Mobile Optimizations
+function handleMobileOptimizations() {
+    // Prevent zoom on input focus on iOS
+    const inputs = document.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            if (window.innerWidth <= 768) {
+                // Scroll into view smoothly
+                setTimeout(() => {
+                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
+        });
+    });
+
+    // Handle mobile keyboard visibility
+    let viewportHeight = window.innerHeight;
+    window.visualViewport?.addEventListener('resize', () => {
+        const currentHeight = window.visualViewport.height;
+        if (currentHeight < viewportHeight * 0.75) {
+            // Keyboard is open
+            document.body.style.overflow = 'hidden';
+        } else {
+            // Keyboard is closed
+            document.body.style.overflow = 'auto';
+        }
+    });
+
+    // Prevent double-tap zoom on buttons
+    const buttons = document.querySelectorAll('button, .subject-item');
+    buttons.forEach(btn => {
+        btn.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    });
+}
+
 // Load data from localStorage
 function loadData() {
     const saved = localStorage.getItem('studyNotes');
@@ -57,6 +96,7 @@ function init() {
     loadData();
     renderSubjects();
     attachEventListeners();
+    handleMobileOptimizations();
 
     // Load first subject if exists
     if (data.subjects.length > 0) {
@@ -381,10 +421,32 @@ function toggleToolPanel(tool) {
         const el = document.getElementById(p + 'Panel');
         if (!el) return;
         el.style.display = (p === tool ? 'block' : 'none');
+        // remove any fullscreen class when switching
+        el.classList.remove('panel-fullscreen');
     });
     // Ensure content area visible
     document.getElementById('contentPlaceholder').style.display = 'none';
     document.getElementById('contentArea').style.display = 'block';
+
+    // On small screens, open chat or calc as fullscreen panel
+    if (window.innerWidth <= 480 && (tool === 'chat' || tool === 'calc')) {
+        const panel = document.getElementById(tool + 'Panel');
+        if (panel) {
+            panel.classList.add('panel-fullscreen');
+            // add a close button if not present
+            if (!panel.querySelector('.close-panel-btn')) {
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'theme-toggle close-panel-btn';
+                closeBtn.title = 'إغلاق';
+                closeBtn.innerText = '✕';
+                closeBtn.addEventListener('click', () => {
+                    panel.style.display = 'none';
+                    panel.classList.remove('panel-fullscreen');
+                });
+                panel.appendChild(closeBtn);
+            }
+        }
+    }
 }
 
 // ---------------------- Gemini AI Integration ----------------------
