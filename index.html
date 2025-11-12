@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ملاحظاتي الدراسية</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <h1><span class="title-emoji">📚</span> <span class="title-text">ملاحظاتي الدراسية</span></h1>
+                <p class="header-subtitle">نظم وأدر ملاحظاتك الدراسية بكفاءة</p>
+            </div>
+
+            <div class="header-right">
+                <button class="theme-toggle" id="themeToggleBtn" title="تبديل الوضع الليلي">🌙</button>
+            </div>
+
+            <div class="header-search">
+                <input type="text" class="search-bar" id="searchBar" placeholder="ابحث عن ملاحظاتك بالعنوان أو المحتوى...">
+                <div id="topLineResult" class="topline-result" aria-live="polite"></div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Sidebar with Subjects -->
+            <div class="sidebar">
+                <h2>المواد الدراسية</h2>
+                <button class="btn-primary" id="addSubjectBtn">+ إضافة مادة</button>
+                <ul class="subject-list" id="subjectList">
+                    <!-- Subjects will be dynamically added here -->
+                </ul>
+                <div class="no-subjects" id="noSubjects" style="display: none;">
+                    لا توجد مواد دراسية بعد. أنشئ واحدة للبدء!
+                </div>
+
+                <!-- Tools Section -->
+                <div class="tools-section">
+                    <h3>الأدوات</h3>
+                    <button class="btn-tool" id="openChatBtn">💬 شات بوت</button>
+                    <button class="btn-tool" id="openAnalyzerBtn">📊 محلل بيانات</button>
+                    <button class="btn-tool" id="openAssistantBtn">🤖 مساعد شخصي</button>
+                    <button class="btn-tool" id="openCalcBtn">🧮 آلة حاسبة</button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div id="contentPlaceholder" class="empty-state">
+                    <p>👈 اختر مادة لعرض الملاحظات</p>
+                    <p>أو أنشئ مادة جديدة للبدء</p>
+                </div>
+
+                <div id="contentArea" style="display: none;">
+                    <div class="content-header">
+                        <h2 id="currentSubject"></h2>
+                        <button class="btn-secondary" id="addNoteBtn">+ إضافة ملاحظة</button>
+                    </div>
+                    <div class="notes-list" id="notesList">
+                        <!-- Notes will be dynamically added here -->
+                    </div>
+                    
+                    <!-- Tool Panels -->
+                    <div class="tool-panels">
+                        <!-- Chatbot Panel -->
+                        <div class="tool-panel" id="chatPanel" style="display: none;">
+                            <h3>شات بوت</h3>
+                            <div class="chat-window" id="chatWindow"></div>
+                            <div class="chat-input">
+                                <input type="text" id="chatInput" placeholder="اكتب رسالة...">
+                                <button id="sendChatBtn">إرسال</button>
+                            </div>
+                        </div>
+
+                        <!-- Data Analyzer Panel -->
+                        <div class="tool-panel" id="analyzerPanel" style="display: none;">
+                            <h3>محلل بيانات (CSV)</h3>
+                            <input type="file" id="csvFileInput" accept="text/csv">
+                            <div id="analyzerResult"></div>
+                        </div>
+
+                        <!-- Personal Assistant Panel -->
+                        <div class="tool-panel" id="assistantPanel" style="display: none;">
+                            <h3>مساعد شخصي</h3>
+                            <div class="assistant-controls">
+                                <button id="addTaskBtn">+ إضافة مهمة</button>
+                                <ul id="taskList"></ul>
+                            </div>
+                        </div>
+
+                        <!-- Scientific Calculator Panel -->
+                        <div class="tool-panel" id="calcPanel" style="display: none;">
+                            <div class="calculator-container">
+                                <div class="calc-header">🧮 آلة حاسبة علمية احترافية</div>
+                                <div class="calc-expression-display" id="calcExpressionDisplay"></div>
+                                <input type="text" id="calcDisplay" readonly>
+                                <div class="calc-memory-display" id="calcMemoryDisplay"></div>
+                                <div class="calc-buttons-grid" id="calcButtons"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Subject Modal -->
+    <div class="modal" id="subjectModal">
+        <div class="modal-content">
+            <div class="modal-header">إضافة مادة جديدة</div>
+            <form id="subjectForm">
+                <div class="form-group">
+                    <label for="subjectName">اسم المادة</label>
+                    <input type="text" id="subjectName" required placeholder="مثال: الرياضيات، التاريخ...">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeSubjectModal()">إلغاء</button>
+                    <button type="submit" class="btn-save">إنشاء مادة</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Note Modal -->
+    <div class="modal" id="noteModal">
+        <div class="modal-content">
+            <div class="modal-header" id="noteModalTitle">إضافة ملاحظة جديدة</div>
+            <form id="noteForm">
+                <div class="form-group">
+                    <label for="noteTitle">عنوان الملاحظة</label>
+                    <input type="text" id="noteTitle" required placeholder="أدخل عنوان الملاحظة...">
+                </div>
+                <div class="form-group">
+                    <label for="noteContent">محتوى الملاحظة</label>
+                    <textarea id="noteContent" required placeholder="أدخل محتوى ملاحظتك هنا..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeNoteModal()">إلغاء</button>
+                    <button type="submit" class="btn-save" id="saveNoteBtn">حفظ الملاحظة</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
